@@ -20,6 +20,20 @@ Hardware → CPU parallelism → GPU programming → Communication → Distribut
                               Systems & clusters  ←  Optimized inference
 ```
 
+## Modules at a Glance
+
+| # | Module | Weeks |
+|---|---|---|
+| 0 | Setup, C Refresher & Know Your Cluster | 0–1 |
+| 1 | Hardware Architecture & the Performance Mental Model | 1–2 |
+| 2 | CPU Parallelism: Threads, SIMD, OpenMP | 3–4 |
+| 3 | GPU Architecture & CUDA Programming | 5–8 |
+| 4 | Communication: MPI, Collectives & NCCL | 9–10 |
+| 5 | Distributed Training of Deep Networks | 11–14 |
+| 6 | Optimized Inference & Serving | 15–17 |
+| 7 | Clusters, Systems & Production Concerns | 18–19 |
+| 8 | Capstone | 20+ |
+
 ---
 
 ## Module 0 — Setup, C Refresher & Know Your Cluster (Weeks 0–1)
@@ -58,7 +72,9 @@ against these numbers:
 interconnect, memory bandwidth (STREAM), peak FLOPs per GPU (spec sheet). This report is the
 reference card for every roofline and cost model in the course.
 
----## Module 1 — Hardware Architecture & the Performance Mental Model (Weeks 1–2)
+---
+
+## Module 1 — Hardware Architecture & the Performance Mental Model (Weeks 1–2)
 
 Why code is slow. Everything later in the course is an application of the ideas here.
 
@@ -78,10 +94,12 @@ Why code is slow. Everything later in the course is an application of the ideas 
 2. Run STREAM; compute your machine's roofline; place your matmul variants on it.
 3. Count the FLOPs of one forward+backward pass of a small transformer by hand; verify against
    PyTorch's profiler.
+4. Turn your timing/plotting code from labs 1–2 into `common/bench` v1 (timer, GFLOP/s
+   computation, roofline plot). Every later module reuses this harness — build it to last.
 
 ### Deliverable
 `module-01/` — matmul variants + a short report: roofline plot of your machine with your kernels
-placed on it.
+placed on it. Plus `common/bench` v1.
 
 ### Resources
 - Hennessy & Patterson, *Computer Architecture* (memory hierarchy chapters — skim, don't read cover to cover).

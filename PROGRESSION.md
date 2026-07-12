@@ -39,4 +39,4 @@ module's lab-notebook.md and report.md files. Labs are checked ✅ only with evi
 - [ ] Diagnose — flaky_wordcount (pytest green + findings.md filled before the fix)
 - [ ] Lab 3 — cluster report (`check_report.py` PASS)
 
-Notes: scaffolded 2026-07-12; reference solutions pending — `solutions` branch needs a first commit on `main`.
+Notes: scaffolded 2026-07-12; reference solutions on the `solutions` branch (compare only after a lab is ✅).

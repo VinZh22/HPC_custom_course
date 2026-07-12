@@ -8,6 +8,10 @@ PASS requires ALL of:
   - 0 < GB/s(-O3) <= 500                    (0 means TODO 3 not done; >500 from a
                                              single core means the timer measured nothing)
 
+Each binary is invoked BEST_OF times and the quietest invocation (lowest median)
+is scored: on shared/virtualized machines, whole seconds can be slow because of
+other tenants — we are measuring the machine, not its congestion.
+
 Self-contained on purpose: you build the real harness (common/bench) in Module 1 Lab 4;
 Module 0 predates it (stated deviation, module README).
 """
@@ -17,7 +21,7 @@ import sys
 from pathlib import Path
 
 LAB = Path(__file__).resolve().parent
-N, REPS, TARGET = 200_000, 200, 3.0
+N, REPS, TARGET, BEST_OF = 200_000, 200, 3.0, 3
 
 
 def die(msg):
@@ -26,12 +30,17 @@ def die(msg):
     sys.exit(1)
 
 
-def run(binary):
+def run_once(binary):
     p = subprocess.run([str(LAB / binary), str(N), str(REPS)],
                        capture_output=True, text=True, timeout=600)
     if p.returncode != 0:
         die(f"{binary} exited {p.returncode}:\n{p.stderr}")
     return {k: float(v) for k, v in re.findall(r"(\w+)=([-+0-9.eE]+)", p.stdout)}
+
+
+def run(binary):
+    return min((run_once(binary) for _ in range(BEST_OF)),
+               key=lambda f: f["median"])
 
 
 def main():

@@ -1,0 +1,20 @@
+the cluster scheduler assigns nodes to jobs and the fabric moves bytes
+between them while every kernel fights for memory bandwidth
+caches hide latency registers hide almost everything else
+a warp executes in lockstep and divergence wastes lanes
+predict-implement-measure-explain-the-gap-forever is the loop this course runs on
+supercalifragilisticexpialidocious appears here only to be the second-longest word
+microbenchmark-hygienics matters because timers lie warm-ups pay debts
+uninitialized-registers hold stale garbage from whoever ran before you
+the-scheduler-eats-your-homework-silently unless you checkpoint often
+42 threads raced and nobody won the update was lost
+false sharing makes neighbors pay for each other on one cache line
+bandwidth is a budget latency is a debt and rooflines are honest
+transpose walks rows then columns and one of those directions hurts
+valgrind sees every byte you touch and remembers every byte you forgot
+gdb answers where while perf answers why and neither accepts vibes
+allocate initialize compute free repeat until the tests are green
+Amdahl caps your dreams Gustafson sells you bigger inputs
+kernels stream tiles through shared memory to dodge global traffic
+overlap copies with compute or watch expensive silicon idle
+deadlines slip when segfaults hide in code nobody measured

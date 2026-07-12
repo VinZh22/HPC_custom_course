@@ -1,0 +1,12 @@
+# Python
+__pycache__/
+.pytest_cache/
+*.pyc
+
+# Compiled lab artifacts — every lab's Makefile rebuilds them
+*.o
+module-00/labs/lab1_transpose/transpose
+module-00/labs/lab2_dotprod/dotprod_O0
+module-00/labs/lab2_dotprod/dotprod_O3
+module-00/diagnose/flaky_wordcount/wordfreq
+stream

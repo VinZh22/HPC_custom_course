@@ -35,11 +35,13 @@ apply even when the learner casually says "fix this" or "just show me":
    have (profiler output, test diff, timing). Respond to their hypothesis — confirm,
    refute, or nudge — rather than diagnosing from scratch. Never reveal a `diagnose/`
    exercise's planted defect; `override: solve` applies here too.
-5. **Never draft `report.md` or `lab-notebook.md` content.** These certify the learning.
-   Review them only after the learner has written them, and review like a senior
-   colleague: challenge the prediction, the gap analysis, and the profiler evidence —
-   don't grade style, don't just praise. Fixing grammar or wording on request is fine;
-   supplying the prediction, numbers, or gap analysis is not.
+5. **Written deliverables are results-only (format decision 2026-07-17).** `results.md`
+   is measured numbers + context — helping record or format it is fine; the numbers must
+   come from the learner's runs. MCQ answer keys are not revealed before the learner has
+   answered. `questions.md` is the Q&A channel: answer questions there in place, under
+   the same rules 2–4 (trivia directly, unfinished-lab core logic via the hint ladder).
+   In `diagnose/` findings, the pasted profiler/valgrind evidence must be the learner's
+   own until the exercise's tests are green.
 6. **Unrestricted zones.** Full, direct help — including writing code — is fine for:
    environment and cluster setup, Makefiles/CMake, git, plotting and report formatting,
    anything under `common/` EXCEPT the core timing/roofline logic of `common/bench`

@@ -2,17 +2,24 @@
 
 This document is the template for generating course modules. Every module follows this
 structure (or deviates from it consciously, with a stated reason). The goal of the format:
-train *applied* performance engineering — the loop of **predict → implement → measure →
-explain the gap** — not academic knowledge recall.
+train *applied* performance engineering — the loop of **implement → measure → verify** —
+not academic knowledge recall.
+
+> **Format decision (2026-07-17, learner):** no prediction or free-text commentary
+> deliverables. The written output per lab is measured results + their context only.
+> Understanding checks, where needed, are MCQs with a self-checkable answer key. Each
+> module carries a `questions.md` where the learner writes questions and Claude answers
+> them in place. Module 0 predates this decision and was closed under the old format.
 
 ## Core principles
 
 1. **Every lab is a contract.** A lab = spec + correctness tests + an executable performance
    target. It is done when tests are green AND the benchmark prints PASS. No lab is
    "read and understood" — it is measured.
-2. **Predict before you measure.** Each lab's report starts with a prediction (roofline,
-   cost model, scaling law) written *before* running the code. The learning lives in the
-   gap between prediction and measurement.
+2. **Measure and record.** Each lab ends with the measured numbers recorded next to their
+   context (hardware, compiler + flags, exact command). A number without context is noise;
+   a number with context is the unit of knowledge in this course. No prediction or
+   commentary writing is required.
 3. **De-scaffold over time.** First contact with a concept gets a skeleton; second contact
    gets a blank file and a spec. By mid-course, labs are "match the reference within
    tolerance, hit the perf bar" with no starter code.
@@ -23,9 +30,13 @@ explain the gap** — not academic knowledge recall.
    used everywhere; Module 3 kernels plug into the Module 5 training loop; the Module 5
    model is served in Module 6. Nothing is throwaway — never generate a standalone
    one-off harness where `common/bench` or an earlier module's artifact fits.
-6. **Reports over notes.** The written deliverable is a short engineering report per lab,
-   not lecture notes. Knowledge md files stay lean — mental models, vocabulary, reading
-   pointers — and textbooks/papers carry the depth.
+6. **Results, MCQs, and a question channel — not essays.** The written deliverable per lab
+   is a `results.md` (numbers + context, fillable from program output). When a concept
+   needs an understanding check, ship an MCQ block with an answer key at the bottom of the
+   module README (or `self_check.md`). Each module has a `questions.md`: the learner
+   writes questions there while working, Claude answers them in place (TUTOR.md rules
+   still govern what can be answered for unfinished labs). Knowledge md files stay lean —
+   mental models, vocabulary, reading pointers — and textbooks/papers carry the depth.
 
 ## Directory template
 
@@ -37,10 +48,10 @@ module-XX/
       <code>.{c,cu,py}       # tier-1: skeleton with TODOs / tier-2: empty + spec
       test_correctness.py    # validates against a reference implementation
       bench.py               # runs the benchmark; perf target encoded, prints PASS/FAIL
-      report.md              # learner-written: prediction, measurement, gap analysis
+      results.md             # measured numbers + context (hardware, flags, command) — no commentary
   diagnose/
     <slug>/                  # "why is this slow/wrong?" exercise: code + symptom description
-  lab-notebook.md            # running log: what ran, on what hardware, what surprised
+  questions.md               # learner-written questions; Claude answers them in place
 
 common/                      # shared across modules, built by the learner
   bench/                     # timing, roofline, plotting utilities (built in Module 1)
@@ -76,24 +87,25 @@ Keep it lean — target 300–600 lines. Sections:
 - **bench.py**: uses `common/bench`; encodes the performance target as an assertion
   (e.g., `>= 0.6 * cublas_gflops`, `>= 0.85 scaling efficiency at 4 GPUs`); prints a
   one-line PASS/FAIL plus the measured numbers; saves a plot when relevant.
-- **report.md** (learner-written, ~half a page), fixed template:
-  1. Prediction and the model behind it (written before first run)
-  2. Measured result (hardware, versions, command line)
-  3. Gap analysis — why prediction and measurement differ
-  4. Profiler evidence (screenshot/trace excerpt) with one paragraph of interpretation
+- **results.md** (a few lines, fillable by pasting program/bench output), fixed template:
+  1. Measured result (hardware, compiler + versions, exact command line)
+  2. Profiler/bench evidence when the lab produced any (trace excerpt, plot path)
+  No prediction, gap-analysis, or free-text interpretation sections. If the lab has a
+  conceptual trap worth checking, encode it as an MCQ in the module's self-check instead.
 
 ## Diagnosis exercises (`diagnose/`)
 
 Deliberately defective code with a realistic symptom description, e.g. "this scales to
 2 threads then stops improving" or "GPU utilization is 95% but it's slower than the naive
-version". The learner must find the cause *with profiler evidence* before fixing it.
+version". The learner must find the cause *with profiler evidence* before fixing it — the
+deliverable is the pasted evidence and a root-cause `file:line`, not an essay.
 Defects are drawn from real failure classes: false sharing, uncoalesced access, missing
 compute/comm overlap, tiny-message collectives, input-starved GPU, sync-in-hot-loop.
 
 ## Solutions policy
 
 Reference solutions live on the `solutions` branch, never on `main`. Each solution includes
-its own report.md showing the numbers it achieved, so the learner can compare after — not
+its own results.md showing the numbers it achieved, so the learner can compare after — not
 before — their own attempt.
 
 ## Role of Claude as course author

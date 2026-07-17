@@ -170,8 +170,15 @@ was allocated. Read both — the fix is usually at the allocation.
 
 ### 0.6 What "knowing your cluster" means
 
-**A node** = CPUs + RAM + GPUs on one motherboard, sharing an OS. **The cluster** = nodes
+**A node** = CPUs + RAM + GPUs on one motherboard, sharing an OS. **A cluster** = nodes
 joined by a network fabric, fronted by a scheduler.
+
+**Step 0 — establish what you actually have.** You know it's multi-GPU; you may not know if
+it's multi-*node* or scheduled. Probe, don't assume: `sinfo` → SLURM, `qstat` → PBS,
+`bhosts` → LSF. All three "command not found" → you likely have direct SSH access to one
+server — a perfectly good setup for this course and a valid answer for the report (write
+"none — direct access", not a guess). `nvidia-smi` describes *this* machine only; other
+nodes reveal themselves through the scheduler or your admin.
 
 **Intra-node GPU topology.** GPUs talk to each other over NVLink (fast, hundreds of GB/s) or
 over PCIe (slower, tens of GB/s). `nvidia-smi topo -m` prints the matrix; the legend:
@@ -347,10 +354,13 @@ You should be able to use these in a professional conversation after this module
 
 - **Goal:** the reference card for the whole course. Every later module's perf targets are
   calibrated against this file (MODULE_FORMAT.md points here).
-- **Do:** fill [`cluster-report.md`](cluster-report.md) — the template embeds the command
-  for every field. Sections: node inventory, GPU datasheet peaks (dense, with source URLs),
-  `nvidia-smi topo -m` + interpretation, inter-node fabric, scheduler, storage, measured
-  STREAM, and the "numbers to know by heart" table.
+- **Do:** first §0.6's Step 0 — establish whether you have one node or several, scheduled
+  or direct. Then fill [`cluster-report.md`](cluster-report.md) — the template embeds the
+  command for every field. Sections: node inventory, GPU datasheet peaks (dense, with source
+  URLs), `nvidia-smi topo -m` + interpretation, inter-node fabric, scheduler, storage,
+  measured STREAM, and the "numbers to know by heart" table. "None — single server" is a
+  legitimate value for the scheduler and inter-node sections; state it explicitly rather
+  than leaving TODOs.
 - **STREAM recipe:**
 
   ```bash
@@ -361,7 +371,7 @@ You should be able to use these in a professional conversation after this module
   ```
 
   `80000000` (640 MB/array) is enough for L3 ≤ 160 MB — scale up if yours is bigger. Run it
-  on a *compute* node (via the scheduler!), not the login node.
+  on a *compute* node (via the scheduler, if you have one), not on a login node.
 - **Done when:** `python3 module-00/labs/lab3_cluster_report/check_report.py` prints PASS
   (no TODOs left, all sections present, Triad number recorded).
 

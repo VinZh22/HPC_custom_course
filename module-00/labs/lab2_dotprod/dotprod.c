@@ -45,8 +45,11 @@ static void keep(double v) { __asm__ __volatile__("" : : "g"(v) : "memory"); }
 
 /* TODO 1: the dot product — one plain loop, nothing clever. */
 double dot(const double *x, const double *y, size_t n) {
-    (void)x; (void)y; (void)n;
-    return 0.0; /* TODO 1 */
+    double res = 0;
+    for (size_t i=0; i< n; i++){
+        res += x[i] * y[i];
+    }
+    return res;
 }
 
 /* TODO 2: time dot() honestly. Requirements (each has a "why" — you defend
@@ -56,11 +59,40 @@ double dot(const double *x, const double *y, size_t n) {
  *   - every result passed to keep() INSIDE the timed region
  *   - *best = fastest rep; *median = middle of the sorted times (qsort)
  */
+
+int doubleComparator(const void *first, const void *second) {
+    double a = *(const double *)first;
+    double b = *(const double *)second;
+    if (a < b) return -1;
+    if (a > b) return  1;
+    return 0;
+}
+
+
 void time_dot(const double *x, const double *y, size_t n, int reps,
               double *best, double *median) {
-    (void)x; (void)y; (void)n; (void)reps;
     *best = 0.0;
-    *median = 0.0; /* TODO 2 */
+    *median = 0.0;
+    double *nb = malloc(reps * sizeof *nb);
+    dot(x,y,n); // warmup
+    for (int i=0; i<reps; i++){
+        double begin = now_sec();
+        double ans = dot(x, y, n);
+        keep(ans);
+        double end = now_sec();
+        nb[i] = end-begin;
+    }
+    qsort(nb, reps, sizeof(double), doubleComparator);
+
+    *best = nb[0];
+
+    if (reps%2==0){
+        *median = (nb[reps/2] + nb[reps/2 -1]) / 2.;
+    }
+    else{
+        *median = nb[reps/2];
+    }
+    free(nb);
 }
 
 /* ---------------------------- provided main ---------------------------- */
@@ -100,8 +132,8 @@ int main(int argc, char **argv) {
     /* TODO 3: operation counts for ONE dot() call — your first arithmetic-
      * intensity accounting. flops: count multiplies and adds. bytes: what must
      * be read from memory. (Both depend on n.) */
-    double flops = 0.0; /* TODO 3a */
-    double bytes = 0.0; /* TODO 3b */
+    double flops = 2*n; /* TODO 3a */
+    double bytes = 2*n*sizeof *x; /* TODO 3b */
     printf("gflops=%.2f gbps=%.2f\n", flops / median / 1e9, bytes / median / 1e9);
 
     free(x);

@@ -85,7 +85,8 @@ CLUSTER = [  # needed on the cluster for Lab 3
     ("nvidia-smi",                    has_bin("nvidia-smi"),
      "must work on a GPU node"),
     ("scheduler (srun/sbatch/qsub)",  has_bin("srun", "sbatch", "qsub"),
-     "run this script on the cluster login node"),
+     "none found is a valid answer (direct-access server) — record it in the "
+     "cluster report instead of guessing"),
     ("numactl",                       has_bin("numactl"),
      "apt install numactl — NUMA layout for the report"),
 ]

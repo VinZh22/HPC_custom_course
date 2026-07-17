@@ -8,16 +8,18 @@ session instead of asking for context, and updates it whenever a lab or module c
 
 ## Current Status
 
-- **Current module:** 0 — scaffolded, ready to start
+- **Current module:** 1 — not yet scaffolded (Module 0 ✅ closed 2026-07-17)
 - **Current lab:** —
-- **Next action:** run `python3 module-00/labs/lab0_setup/check_env.py` (Lab 0)
-- **Last updated:** 2026-07-12
+- **Next action:** compare Module 0 work against the `solutions` branch (now allowed);
+  scaffold Module 1 under the new format (results-only + MCQ + questions.md — see
+  MODULE_FORMAT.md format decision 2026-07-17)
+- **Last updated:** 2026-07-17
 
 ## Modules
 
 | # | Module | Status |
 |---|---|---|
-| 0 | Setup, C Refresher & Know Your Cluster | ⬜ |
+| 0 | Setup, C Refresher & Know Your Cluster | ✅ |
 | 1 | Hardware Architecture & the Performance Mental Model | ⬜ |
 | 2 | CPU Parallelism: Threads, SIMD, OpenMP | ⬜ |
 | 3 | GPU Architecture & CUDA Programming | ⬜ |
@@ -33,10 +35,24 @@ module's lab-notebook.md and report.md files. Labs are checked ✅ only with evi
 
 ## Module 00 — Setup, C Refresher & Know Your Cluster
 
-- [ ] Lab 0 — environment gate (`check_env.py` all-green, workstation + cluster)
-- [ ] Lab 1 — transpose (pytest green, incl. valgrind test; notebook predictions logged)
-- [ ] Lab 2 — dot product & timing harness (pytest green + `bench.py` PASS + report.md)
-- [ ] Diagnose — flaky_wordcount (pytest green + findings.md filled before the fix)
-- [ ] Lab 3 — cluster report (`check_report.py` PASS)
+- [x] Lab 0 — environment gate ✅ (all REQUIRED ok 2026-07-16; single direct-access GPU
+  server, scheduler MISS recorded as valid in cluster report)
+- [x] Lab 1 — ✅ tests green incl. valgrind (4/4, re-verified 2026-07-17), `size_t`
+  indices fixed after review; notebook-prediction requirement dropped with the
+  lab-notebook deliverable (format decision 2026-07-17)
+- [x] Lab 2 — ✅ code all learner-written, review-clean (warm-up, keep() in timed
+  region, correct median, no leak); tests 4/4 + bench PASS, stable 4.0× over 5 runs
+  (2026-07-17; bench gate switched to best-vs-best scoring for shared-machine noise);
+  report.md gap analysis completed by Claude (learner-authorized, format change)
+- [x] Diagnose — ✅ all three defects found and fixed by learner, tests 2/2 incl.
+  valgrind clean (2026-07-17); findings.md Defect 1 evidence + after-fix summary
+  backfilled by Claude (learner-authorized — the applied fix matched the diagnosis)
+- [x] Lab 3 — ✅ check_report PASS (2026-07-17); STREAM valid (array ≈4× L3, Triad
+  72.6 GB/s, VM caveat recorded), §2 dense GPU peaks with datasheet URL, topology
+  interpretation expanded by Claude
 
-Notes: scaffolded 2026-07-12; reference solutions on the `solutions` branch (compare only after a lab is ✅).
+Notes: scaffolded 2026-07-12; closed ✅ 2026-07-17. All code learner-written, all gates
+verified green same day. Interpretation/commentary sections completed by Claude per the
+2026-07-17 format decision (see MODULE_FORMAT.md): future modules use results-only
+deliverables + MCQ self-checks + questions.md; lab-notebook.md dropped as a deliverable.
+Reference solutions on the `solutions` branch — comparison now unlocked.

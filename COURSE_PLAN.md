@@ -6,8 +6,10 @@ optimized, multi-GPU / multi-node training and inference systems."
 **Assumed background:** ML / Deep Learning / LLMs (single-device level), CS fundamentals, applied
 mathematics. C/C++ seen academically but rusty — Module 0 includes a refresher.
 **Not assumed:** parallel programming, computer architecture beyond basics, distributed systems.
-**Hardware:** you have access to a real multi-GPU server / cluster with a scheduler, so labs use
-it from Module 3 onward — no simulator workarounds needed.
+**Hardware:** you have a real multi-GPU machine for sure; whether it's *several nodes* with a
+*scheduler* is unconfirmed — Module 0 (Lab 3) establishes it. Labs use real hardware from
+Module 3 onward — no simulators. The few multi-node/scheduler-specific labs (Modules 4 and 7)
+carry stated single-node fallbacks.
 
 **Format:** 9 modules ≈ 20–21 weeks at 8–10 h/week, balanced between distributed training and
 optimized inference. Each module has theory, hands-on labs, and a deliverable committed to this
@@ -59,8 +61,10 @@ Your C is rusty, so warm it up on exactly the subset this course uses:
   material, not cover-to-cover reading.
 
 ### Know your cluster
-You have real multi-GPU / scheduler access — map it now, because every later lab is designed
-against these numbers:
+Map what you have now, because every later lab is designed against these numbers:
+- **First, establish what it actually is:** one node or several? A scheduler
+  (`sinfo` → SLURM, `qstat` → PBS, `bhosts` → LSF; all "command not found" → probably
+  direct SSH to one server, which is a valid answer — record it, don't guess)?
 - Node inventory: GPU model & count per node, `nvidia-smi topo -m` (NVLink vs PCIe pairs),
   CPU cores & NUMA layout (`lscpu`, `numactl --hardware`).
 - Interconnect between nodes (InfiniBand? RoCE? plain Ethernet?) and its nominal bandwidth.
@@ -206,6 +210,8 @@ studied in isolation so Module 5 isn't magic.
    inter-node (IB/RoCE); compare against the topology you mapped in Module 0.
 4. Write and submit real scheduler jobs on your cluster: single-node multi-GPU, then a
    2-node job; verify NCCL picks the fast interconnect (`NCCL_DEBUG=INFO`).
+   *(Single node / no scheduler per your Module 0 report: run the same NCCL checks
+   multi-process on one node, and treat the scheduler workflow as survey material.)*
 
 ### Deliverable
 `module-04/` — your ring all-reduce implementation + measured vs predicted cost plot.
@@ -321,7 +327,8 @@ The unglamorous layer that determines whether the fast code actually runs.
 
 ### Labs
 1. Containerize your Module 5 training job; run it under SLURM with a resume-from-checkpoint
-   test (kill the job mid-run, resume, verify loss continuity).
+   test (kill the job mid-run, resume, verify loss continuity). *(No scheduler? Substitute a
+   shell-script/tmux launcher — the checkpoint/kill/resume test is the point, not SLURM.)*
 2. Build a streaming data pipeline and prove (with profiler evidence) the GPU is never
    input-starved.
 

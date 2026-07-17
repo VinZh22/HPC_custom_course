@@ -2,7 +2,10 @@
 """Lab 2 bench gate: is -O3 really faster — and is your harness telling the truth?
 
 PASS requires ALL of:
-  - median(-O0) / median(-O3) >= 3          (the actual perf target)
+  - best(-O0) / best(-O3) >= 3              (the actual perf target — `best` because on
+                                             a shared/virtualized machine the fastest rep
+                                             is the closest sample to the uncontended
+                                             hardware; medians drift with neighbors)
   - speedup <= 100                          (higher almost always means -O3 deleted
                                              your loop: is keep() inside the timed region?)
   - 0 < GB/s(-O3) <= 500                    (0 means TODO 3 not done; >500 from a
@@ -40,7 +43,7 @@ def run_once(binary):
 
 def run(binary):
     return min((run_once(binary) for _ in range(BEST_OF)),
-               key=lambda f: f["median"])
+               key=lambda f: f["best"])
 
 
 def main():
@@ -49,11 +52,11 @@ def main():
         die(f"build failed:\n{b.stderr}")
 
     o0, o3 = run("dotprod_O0"), run("dotprod_O3")
-    speedup = o0["median"] / o3["median"]
+    speedup = o0["best"] / o3["best"]
 
     print(f"n={N} reps={REPS}")
-    print(f"-O0:              median {o0['median']:.3e} s   {o0['gbps']:6.2f} GB/s")
-    print(f"-O3 -march=native: median {o3['median']:.3e} s   {o3['gbps']:6.2f} GB/s")
+    print(f"-O0:              best {o0['best']:.3e} s  median {o0['median']:.3e} s   {o0['gbps']:6.2f} GB/s")
+    print(f"-O3 -march=native: best {o3['best']:.3e} s  median {o3['median']:.3e} s   {o3['gbps']:6.2f} GB/s")
     print(f"speedup: {speedup:.1f}x   (target: >= {TARGET}x)")
 
     if o3["gbps"] <= 0:

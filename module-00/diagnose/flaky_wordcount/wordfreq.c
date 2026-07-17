@@ -17,6 +17,7 @@
 int main(void) {
     char buf[256];
     int *counts = malloc(26 * sizeof(int));
+    memset(counts, 0, 26*sizeof(int));
     char *longest = NULL;
     long nwords = 0;
 
@@ -25,7 +26,7 @@ int main(void) {
 
     while (scanf("%255s", buf) == 1) {
         size_t len = strlen(buf);
-        char *word = malloc(len);
+        char *word = malloc((len+1)* sizeof(char));
         if (!word)
             return 1;
         strcpy(word, buf);
@@ -38,15 +39,14 @@ int main(void) {
             free(longest);
             longest = word;
         }
+        else free(word);
         nwords++;
     }
-
     printf("words: %ld\n", nwords);
     for (int i = 0; i < 26; i++)
         if (counts[i] > 0)
             printf("%c: %d\n", 'a' + i, counts[i]);
     printf("longest: %s\n", longest ? longest : "(none)");
-
     free(counts);
     free(longest);
     return 0;

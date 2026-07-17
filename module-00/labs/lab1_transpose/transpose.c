@@ -40,8 +40,8 @@ static void print_matrix(const char *name, const double *A, size_t n, size_t m) 
  * 4096 x 4096 matrix be a local variable instead?
  */
 double *alloc_matrix(size_t n, size_t m) {
-    (void)n; (void)m;
-    return NULL; /* TODO 1 */
+    double *res = malloc(n * m * sizeof *res);
+    return res;
 }
 
 /* TODO 2: out-of-place transpose. A is n x m, B is m x n, and
@@ -49,14 +49,24 @@ double *alloc_matrix(size_t n, size_t m) {
  * You will type this pattern in every module of this course.
  */
 void transpose(const double *A, double *B, size_t n, size_t m) {
-    (void)A; (void)B; (void)n; (void)m; /* TODO 2 */
+    for (size_t i=0; i<n; i++){
+        for (size_t j=0; j<m; j++){
+            B[j*n + i] = A[i*m+j];
+        }
+    }
 }
 
 /* TODO 3: transpose a square n x n matrix in place — no second buffer.
  * Think first: which (i, j) pairs must you visit — all of them, or half?
  */
 void transpose_inplace(double *A, size_t n) {
-    (void)A; (void)n; /* TODO 3 */
+    for (size_t i=0; i<n; i++){
+        for (size_t j=i+1; j<n; j++){
+            double tmp = A[i*n+j];
+            A[i*n+j] = A[j*n+i];
+            A[j*n+i] = tmp;
+        }
+    }
 }
 
 /* ---------------------------- provided main ---------------------------- */

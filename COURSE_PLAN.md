@@ -11,7 +11,7 @@ mathematics. C/C++ seen academically but rusty — Module 0 includes a refresher
 Module 3 onward — no simulators. The few multi-node/scheduler-specific labs (Modules 4 and 7)
 carry stated single-node fallbacks.
 
-**Format:** 9 modules ≈ 20–21 weeks at 8–10 h/week, balanced between distributed training and
+**Format:** 9 modules ≈ 21–22 weeks at 8–10 h/week, balanced between distributed training and
 optimized inference. Each module has theory, hands-on labs, and a deliverable committed to this
 repo (`module-XX/` folders). Compress or stretch as needed — the module *order* is the important
 part: each layer builds on the one below.
@@ -32,9 +32,9 @@ Hardware → CPU parallelism → GPU programming → Communication → Distribut
 | 3 | GPU Architecture & CUDA Programming | 5–8 |
 | 4 | Communication: MPI, Collectives & NCCL | 9–10 |
 | 5 | Distributed Training of Deep Networks | 11–14 |
-| 6 | Optimized Inference & Serving | 15–17 |
-| 7 | Clusters, Systems & Production Concerns | 18–19 |
-| 8 | Capstone | 20+ |
+| 6 | Optimized Inference & Serving | 15–18 |
+| 7 | Clusters, Systems & Production Concerns | 19–20 |
+| 8 | Capstone | 21+ |
 
 ---
 
@@ -271,7 +271,7 @@ parallelism-design exercise write-up.
 
 ---
 
-## Module 6 — Optimized Inference & Serving (Weeks 15–17)
+## Module 6 — Optimized Inference & Serving (Weeks 15–18)
 
 Different game than training: decode is memory-bound, latency matters, and requests arrive
 one by one.
@@ -282,8 +282,8 @@ one by one.
 - **KV cache**: exact size math, why it dominates memory at long context.
 - Batching strategies: static → dynamic → **continuous batching**; PagedAttention (vLLM) as
   virtual memory for the KV cache.
-- Attention kernels: FlashAttention (training/prefill) and flash-decoding — connect back to
-  your Module 3 fusion lab.
+- Attention kernels: FlashAttention (training/prefill) and flash-decoding — you implement
+  FlashAttention yourself in lab 3, closing the loop from your Module 3 fusion lab.
 - **Quantization** for inference: int8/fp8 weights & activations, GPTQ/AWQ, KV-cache
   quantization; accuracy/perf tradeoffs.
 - Speculative decoding; (survey) distillation, early exit.
@@ -296,13 +296,20 @@ one by one.
    tokens/sec from memory bandwidth alone; measure and compare.
 2. Implement a KV cache from scratch inside a minimal GPT generation loop; measure the
    speedup vs recomputation.
-3. Benchmark naive HF `generate` vs vLLM on the same model & workload; plot the
+3. **Implement FlashAttention**: a fused Triton (or CUDA) attention kernel — tiled,
+   online-softmax, never materializing the full attention matrix. This is the payoff of
+   your Module 3 fusion lab. Validate numerics against
+   `torch.nn.functional.scaled_dot_product_attention`; benchmark yours vs naive attention
+   and PyTorch's flash backend across sequence lengths; show the memory-traffic win.
+   *(Stretch: a flash-decoding variant — split over KV length — for the decode phase.)*
+4. Benchmark naive HF `generate` vs vLLM on the same model & workload; plot the
    latency-vs-throughput frontier for several batch sizes / request rates.
-4. Quantize the model (e.g., AWQ or fp8); measure tokens/sec gain and quality change on a
+5. Quantize the model (e.g., AWQ or fp8); measure tokens/sec gain and quality change on a
    small eval set.
 
 ### Deliverable
-`module-06/` — KV-cache implementation + benchmark report with predicted-vs-measured decode
+`module-06/` — KV-cache implementation + your FlashAttention kernel with its benchmark table
+(naive vs yours vs PyTorch SDPA) + benchmark report with predicted-vs-measured decode
 speeds and the vLLM frontier plot.
 
 ### Resources
@@ -311,7 +318,7 @@ speeds and the vLLM frontier plot.
 
 ---
 
-## Module 7 — Clusters, Systems & Production Concerns (Weeks 18–19)
+## Module 7 — Clusters, Systems & Production Concerns (Weeks 19–20)
 
 The unglamorous layer that determines whether the fast code actually runs.
 
@@ -337,7 +344,7 @@ The unglamorous layer that determines whether the fast code actually runs.
 
 ---
 
-## Module 8 — Capstone (Weeks 20+)
+## Module 8 — Capstone (Weeks 21+)
 
 Pick one; each exercises the full stack. Write it up like an engineering report: design,
 predicted performance (rooflines, comm models), measured results, and the gap analysis.
@@ -348,9 +355,10 @@ predicted performance (rooflines, comm models), measured results, and the gap an
 2. **Serve:** Build an inference service for an 7–8B model hitting explicit SLOs
    (e.g., p99 TTFT < 500 ms at X req/s) on fixed hardware; document every optimization and
    its measured contribution.
-3. **Kernel:** Write a fused Triton/CUDA kernel (e.g., a fused attention variant or an
-   RMSNorm+matmul fusion) that beats the stock PyTorch implementation in a real model's
-   end-to-end step time, with Nsight evidence.
+3. **Kernel:** Write a fused Triton/CUDA kernel — one you haven't already built in this
+   course (attention is done in Module 6) — e.g., a fused dequant→matmul for W4A16
+   inference, an RMSNorm+matmul fusion, or a fused SwiGLU MLP block, that beats the stock
+   PyTorch implementation in a real model's end-to-end step time, with Nsight evidence.
 
 ### Deliverable
 `module-08/` — code + engineering report. This is the portfolio piece.
@@ -375,7 +383,7 @@ predicted performance (rooflines, comm models), measured results, and the gap an
 | 3 | Write a tiled CUDA matmul within ~2–5× of cuBLAS; read an Nsight timeline |
 | 4 | Derive ring all-reduce cost; explain what NCCL does on your topology |
 | 5 | Design and justify a 3D-parallelism config for a given model & cluster; compute its memory budget by hand |
-| 6 | Predict decode tokens/sec from bandwidth; explain vLLM's throughput advantage mechanistically |
+| 6 | Predict decode tokens/sec from bandwidth; explain vLLM's throughput advantage mechanistically; implement a working FlashAttention kernel |
 | 7 | Ship a fault-tolerant, containerized, scheduler-managed training job |
 | 8 | Do all of the above on a problem nobody scoped for you |
 
